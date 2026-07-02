@@ -1,10 +1,10 @@
-# 💸 Expense Tracker Backend
+# Expense Tracker Backend
 
 A RESTful API for tracking personal expenses, built with **Spring Boot**, **PostgreSQL**, and powered by **Gemini AI** for intelligent spending analysis.
 
 ---
 
-## 🚀 Tech Stack
+## Tech Stack
 
 | Technology | Version |
 |---|---|
@@ -18,17 +18,17 @@ A RESTful API for tracking personal expenses, built with **Spring Boot**, **Post
 
 ---
 
-## ✨ Features
+## Features
 
-- ✅ Full **CRUD** for expense management
-- ✅ Auto-timestamp on expense creation
-- ✅ Global API response wrapper
-- ✅ **AI-powered spending analysis** via Gemini AI
-- ✅ PostgreSQL persistent storage
+- Full **CRUD** for expense management
+- Auto-timestamp on expense creation
+- Global API response wrapper
+- **AI-powered spending analysis** via Gemini AI
+- PostgreSQL persistent storage
 
 ---
 
-## 📋 API Endpoints
+## API Endpoints
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -41,7 +41,7 @@ A RESTful API for tracking personal expenses, built with **Spring Boot**, **Post
 
 ---
 
-## 📦 Request Body (POST / PUT)
+## Request Body (POST / PUT)
 
 ```json
 {
@@ -65,7 +65,7 @@ A RESTful API for tracking personal expenses, built with **Spring Boot**, **Post
 
 ---
 
-## ⚙️ Setup & Run
+## Setup & Run
 
 ### Prerequisites
 - Java 21
@@ -102,7 +102,7 @@ API will be available at `http://localhost:8080`
 
 ---
 
-## 🤖 AI Analysis Example
+## AI Analysis Example
 
 `GET /expenses/analyze`
 
@@ -113,25 +113,3 @@ API will be available at `http://localhost:8080`
   "data": "วิเคราะห์รายจ่ายของคุณ: เดือนนี้ใช้จ่ายไปกับหมวดอาหารมากที่สุด..."
 }
 ```
-
----
-
-## 📁 Project Structure
-
-```
-src/
-└── main/
-    └── java/
-        └── com/expensetracker/
-            ├── controller/      ← API endpoints
-            ├── service/         ← Business logic + Gemini AI
-            ├── repository/      ← Database layer
-            ├── model/           ← Entity classes
-            └── dto/             ← Response wrapper
-```
-
----
-
-## 👨‍💻 Author
-
-**mg-dotcom** — [github.com/mg-dotcom](https://github.com/mg-dotcom)
