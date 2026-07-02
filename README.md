@@ -53,7 +53,7 @@ A RESTful API for tracking personal expenses, built with **Spring Boot**, **Post
 
 ---
 
-## 📬 Response Format
+## Response Format
 
 ```json
 {
