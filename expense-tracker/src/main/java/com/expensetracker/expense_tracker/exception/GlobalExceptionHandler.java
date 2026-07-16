@@ -12,4 +12,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(400)
                 .body(ApiResponse.error(400, e.getMessage()));
     }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleNotFound(ResourceNotFoundException e) {
+        return ResponseEntity.status(404)
+                .body(ApiResponse.error(404, e.getMessage()));
+    }
 }

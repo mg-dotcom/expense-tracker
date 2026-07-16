@@ -1,5 +1,6 @@
 package com.expensetracker.expense_tracker.service;
 
+import com.expensetracker.expense_tracker.exception.ResourceNotFoundException;
 import com.expensetracker.expense_tracker.model.Expense;
 import com.expensetracker.expense_tracker.repository.ExpenseRepository;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,28 +25,26 @@ public class ExpenseService {
 
     public void deleteExpense(Long id){
         if (!expenseRepository.existsById(id)){
-            throw new RuntimeException("Expense with ID " + id + " does not exist!");
+            throw new ResourceNotFoundException("Expense with ID " + id + " does not exist!");
         }
         expenseRepository.deleteById(id);
     }
 
     public Expense updateExpense(Long id, Expense expense) {
-        if (!expenseRepository.existsById(id)){
-            throw new RuntimeException("Expense with ID " + id + " does not exist!");
-        }
-        expense.setId(id);
-        expenseRepository.save(expense);
-        return expense;
+        Expense existing = expenseRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Expense with ID " + id + " does not exist!"));
+
+        existing.setName(expense.getName());
+        existing.setCategory(expense.getCategory());
+        existing.setCost(expense.getCost());
+
+        return expenseRepository.save(existing);
     }
 
     public List<Expense> getExpensesByCategory(String category) {
         List<Expense> expenses = expenseRepository.findByCategory(category);
         if(expenses.isEmpty()){
-           /* expenses.isEmpty()        // true ถ้าว่าง
-            expenses.size() == 0      // เช็คจำนวน
-            expenses.size() > 0       // มีข้อมูลอยู่
-            Collections.isEmpty(expenses) // แบบ utility class */
-            throw new RuntimeException("Expense with category " + category + " does not exist!");
+            throw new ResourceNotFoundException("Expense with category " + category + " does not exist!");
         }
         return expenses;
     }
