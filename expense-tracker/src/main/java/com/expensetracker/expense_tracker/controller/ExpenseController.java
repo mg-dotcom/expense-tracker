@@ -6,6 +6,8 @@ import com.expensetracker.expense_tracker.service.ExpenseService;
 import com.expensetracker.expense_tracker.service.GeminiService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +31,7 @@ public class ExpenseController {
     }
 
     @PostMapping
+    @CacheEvict(value = "expenseAnalysis", allEntries = true)
     public ResponseEntity<ApiResponse<String>> addExpense(@Valid @RequestBody Expense expense) {
         expenseService.addExpense(expense);
         return ResponseEntity.status(201).body(ApiResponse.created("Expense added successfully"));
@@ -49,6 +52,7 @@ public class ExpenseController {
         return ResponseEntity.ok(ApiResponse.ok(updated));
     }
 
+    @Cacheable(value = "expenseAnalysis", key = "'latest'")
     @GetMapping("/analyze")
     public ResponseEntity<ApiResponse<String>> analyzeExpenses() {
         List<Expense> expenses = expenseService.getAllExpenses();
