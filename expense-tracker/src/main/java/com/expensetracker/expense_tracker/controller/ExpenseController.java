@@ -4,6 +4,7 @@ import com.expensetracker.expense_tracker.dto.ApiResponse;
 import com.expensetracker.expense_tracker.model.Expense;
 import com.expensetracker.expense_tracker.service.ExpenseService;
 import com.expensetracker.expense_tracker.service.GeminiService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,11 +42,11 @@ public class ExpenseController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<Expense>> updateExpense(
-        @PathVariable Long id,
-        @RequestBody Expense expense
+            @PathVariable Long id,
+            @Valid @RequestBody Expense expense
     ){
-         expenseService.updateExpense(id, expense);
-         return ResponseEntity.ok(ApiResponse.ok(expense));
+        Expense updated = expenseService.updateExpense(id, expense);
+        return ResponseEntity.ok(ApiResponse.ok(updated));
     }
 
     @GetMapping("/analyze")
