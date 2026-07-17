@@ -29,7 +29,7 @@ public class ExpenseController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Void>> addExpense(@RequestBody Expense expense) {
+    public ResponseEntity<ApiResponse<String>> addExpense(@Valid @RequestBody Expense expense) {
         expenseService.addExpense(expense);
         return ResponseEntity.status(201).body(ApiResponse.created("Expense added successfully"));
     }
