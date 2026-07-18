@@ -1,8 +1,10 @@
 package com.expensetracker.expense_tracker.controller;
 
 import com.expensetracker.expense_tracker.dto.ApiResponse;
+import com.expensetracker.expense_tracker.dto.expense.BudgetRequest;
 import com.expensetracker.expense_tracker.dto.expense.ExpenseRequest;
 import com.expensetracker.expense_tracker.dto.expense.ExpenseResponse;
+import com.expensetracker.expense_tracker.dto.expense.ExpenseSummaryResponse;
 import com.expensetracker.expense_tracker.mapper.ExpenseMapper;
 import com.expensetracker.expense_tracker.model.Expense;
 import com.expensetracker.expense_tracker.service.ExpenseService;
@@ -77,7 +79,13 @@ public class ExpenseController {
     }
 
     @GetMapping("/summary")
-    public ResponseEntity<ApiResponse<Map<String, Double>>> getExpenseSummary() {
+    public ResponseEntity<ApiResponse<ExpenseSummaryResponse>> getExpenseSummary(){
         return ResponseEntity.ok(ApiResponse.ok(expenseService.getExpenseSummary()));
+    }
+
+    @PutMapping("/budget")
+    public ResponseEntity<ApiResponse<Void>> setBudget(@Valid @RequestBody BudgetRequest request) {
+        expenseService.setMonthlyBudget(request.getMonthlyBudget());
+        return ResponseEntity.ok(ApiResponse.okMessage("Monthly budget updated"));
     }
 }

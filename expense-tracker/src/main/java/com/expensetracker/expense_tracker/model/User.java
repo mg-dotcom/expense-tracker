@@ -25,6 +25,8 @@ public class User implements UserDetails {
 
     private String password;
 
+    private Double monthlyBudget;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
