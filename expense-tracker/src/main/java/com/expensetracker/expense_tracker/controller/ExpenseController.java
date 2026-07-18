@@ -1,6 +1,9 @@
 package com.expensetracker.expense_tracker.controller;
 
 import com.expensetracker.expense_tracker.dto.ApiResponse;
+import com.expensetracker.expense_tracker.dto.expense.ExpenseRequest;
+import com.expensetracker.expense_tracker.dto.expense.ExpenseResponse;
+import com.expensetracker.expense_tracker.mapper.ExpenseMapper;
 import com.expensetracker.expense_tracker.model.Expense;
 import com.expensetracker.expense_tracker.service.ExpenseService;
 import com.expensetracker.expense_tracker.service.GeminiService;
@@ -22,34 +25,51 @@ public class ExpenseController {
     private final GeminiService geminiService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Expense>>> getAllExpenses(
+    public ResponseEntity<ApiResponse<List<ExpenseResponse>>> getAllExpenses(
             @RequestParam(required = false) String category) {
-        if (category != null){
-            return ResponseEntity.ok(ApiResponse.ok(expenseService.getExpensesByCategory(category)));
-        }
-        return ResponseEntity.ok(ApiResponse.ok(expenseService.getAllExpenses()));
+        List<Expense> expenses = (category != null)
+                ? expenseService.getExpensesByCategory(category)
+                : expenseService.getAllExpenses();
+
+        List<ExpenseResponse> response = expenses.stream()
+                .map(ExpenseMapper::toResponse)
+                .toList();
+
+        return ResponseEntity.ok(ApiResponse.ok(response));
     }
 
     @PostMapping
     @CacheEvict(value = "expenseAnalysis", allEntries = true)
-    public ResponseEntity<ApiResponse<String>> addExpense(@Valid @RequestBody Expense expense) {
+    public ResponseEntity<ApiResponse<String>> addExpense(@Valid @RequestBody ExpenseRequest request) {
+        Expense expense = new Expense();
+        expense.setName(request.getName());
+        expense.setCategory(request.getCategory());
+        expense.setCost(request.getCost());
+
         expenseService.addExpense(expense);
         return ResponseEntity.status(201).body(ApiResponse.created("Expense added successfully"));
     }
 
     @DeleteMapping("/{id}")
+    @CacheEvict(value = "expenseAnalysis", allEntries = true)
     public ResponseEntity<ApiResponse<Void>> deleteExpense(@PathVariable Long id) {
         expenseService.deleteExpense(id);
         return ResponseEntity.ok(ApiResponse.okMessage("Expense " + id + " has been deleted"));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Expense>> updateExpense(
+    @CacheEvict(value = "expenseAnalysis", allEntries = true)
+    public ResponseEntity<ApiResponse<ExpenseResponse>> updateExpense(
             @PathVariable Long id,
-            @Valid @RequestBody Expense expense
-    ){
+            @Valid @RequestBody ExpenseRequest request
+    ) {
+        Expense expense = new Expense();
+        expense.setName(request.getName());
+        expense.setCategory(request.getCategory());
+        expense.setCost(request.getCost());
+
         Expense updated = expenseService.updateExpense(id, expense);
-        return ResponseEntity.ok(ApiResponse.ok(updated));
+        return ResponseEntity.ok(ApiResponse.ok(ExpenseMapper.toResponse(updated)));
     }
 
     @Cacheable(value = "expenseAnalysis", key = "'latest'")
@@ -61,7 +81,7 @@ public class ExpenseController {
     }
 
     @GetMapping("/summary")
-    public ResponseEntity<ApiResponse<Map<String, Double>>> getExpenseSummary(){
+    public ResponseEntity<ApiResponse<Map<String, Double>>> getExpenseSummary() {
         return ResponseEntity.ok(ApiResponse.ok(expenseService.getExpenseSummary()));
     }
 }
