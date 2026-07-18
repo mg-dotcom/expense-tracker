@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -108,5 +109,24 @@ public class ExpenseService {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         user.setMonthlyBudget(amount);
         userRepository.save(user);
+    }
+
+    public void exportToCsv(PrintWriter writer) {
+        writer.println("id,name,category,cost,date");
+        expenseRepository.findAll().forEach(e ->
+                writer.println(String.join(",",
+                        String.valueOf(e.getId()),
+                        escapeCsv(e.getName()),
+                        escapeCsv(e.getCategory()),
+                        String.valueOf(e.getCost()),
+                        e.getDate().toString())));
+    }
+
+    private String escapeCsv(String value) {
+        if (value == null) return "";
+        if (value.contains(",") || value.contains("\"")) {
+            return "\"" + value.replace("\"", "\"\"") + "\"";
+        }
+        return value;
     }
 }

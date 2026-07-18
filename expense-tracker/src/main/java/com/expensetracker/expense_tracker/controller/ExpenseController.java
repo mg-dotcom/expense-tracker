@@ -9,6 +9,7 @@ import com.expensetracker.expense_tracker.mapper.ExpenseMapper;
 import com.expensetracker.expense_tracker.model.Expense;
 import com.expensetracker.expense_tracker.service.ExpenseService;
 import com.expensetracker.expense_tracker.service.GeminiService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -17,6 +18,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -87,5 +89,12 @@ public class ExpenseController {
     public ResponseEntity<ApiResponse<Void>> setBudget(@Valid @RequestBody BudgetRequest request) {
         expenseService.setMonthlyBudget(request.getMonthlyBudget());
         return ResponseEntity.ok(ApiResponse.okMessage("Monthly budget updated"));
+    }
+
+    @GetMapping("/export")
+    public void exportCsv(HttpServletResponse response) throws IOException {
+        response.setContentType("text/csv");
+        response.setHeader("Content-Disposition", "attachment; filename=expenses.csv");
+        expenseService.exportToCsv(response.getWriter());
     }
 }
