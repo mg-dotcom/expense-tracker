@@ -9,7 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 import java.util.Date;
 
-@Data // สร้าง getter, setter, constructor
+@Data
 @Entity
 @Table(name = "expenses")
 public class Expense {
@@ -29,4 +29,8 @@ public class Expense {
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime date;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }

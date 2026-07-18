@@ -27,8 +27,12 @@ public class ExpenseService {
     private final ExpenseRepository expenseRepository;
     private final UserRepository userRepository;
 
+    private User getCurrentUser() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
     public List<Expense> getAllExpenses() {
-        return expenseRepository.findAll();
+        return expenseRepository.findByUser(getCurrentUser());
     }
 
     public List<ExpenseResponse> getExpenses(String category, LocalDate from, LocalDate to) {
@@ -53,37 +57,42 @@ public class ExpenseService {
     }
 
     public void addExpense(Expense expense){
+        expense.setUser(getCurrentUser());
         expenseRepository.save(expense);
     }
 
+
     public void deleteExpense(Long id){
-        if (!expenseRepository.existsById(id)){
+        Expense expense = expenseRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Expense with ID " + id + " does not exist!"));
+        if (!expense.getUser().getId().equals(getCurrentUser().getId())) {
             throw new ResourceNotFoundException("Expense with ID " + id + " does not exist!");
         }
-        expenseRepository.deleteById(id);
+        expenseRepository.delete(expense);
     }
 
     public Expense updateExpense(Long id, Expense expense) {
         Expense existing = expenseRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Expense with ID " + id + " does not exist!"));
-
+        if (!existing.getUser().getId().equals(getCurrentUser().getId())) {
+            throw new ResourceNotFoundException("Expense with ID " + id + " does not exist!");
+        }
         existing.setName(expense.getName());
         existing.setCategory(expense.getCategory());
         existing.setCost(expense.getCost());
-
         return expenseRepository.save(existing);
     }
 
     public List<Expense> getExpensesByCategory(String category) {
-        List<Expense> expenses = expenseRepository.findByCategory(category);
-        if(expenses.isEmpty()){
+        List<Expense> expenses = expenseRepository.findByUserAndCategory(getCurrentUser(), category);
+        if (expenses.isEmpty()){
             throw new ResourceNotFoundException("Expense with category " + category + " does not exist!");
         }
         return expenses;
     }
 
     public ExpenseSummaryResponse getExpenseSummary() {
-        List<Expense> expenses = expenseRepository.findAll();
+        List<Expense> expenses = expenseRepository.findByUser(getCurrentUser());
         Map<String, Double> byCategory = expenses.stream()
                 .collect(Collectors.groupingBy(Expense::getCategory, Collectors.summingDouble(Expense::getCost)));
 
