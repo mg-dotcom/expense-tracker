@@ -1,7 +1,6 @@
 package com.expensetracker.expense_tracker.service;
 
 import com.expensetracker.expense_tracker.model.Expense;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -50,8 +49,8 @@ public class GeminiService {
                 .retrieve()
                 .bodyToMono(GeminiResponse.class).map(response -> {
                     try {
-                        return response.candidates().get(0)
-                                .content().parts().get(0)
+                        return response.candidates().getFirst()
+                                .content().parts().getFirst()
                                 .text();
                     } catch (Exception e) {
                         return "Analysis failed, or the response format was invalid";

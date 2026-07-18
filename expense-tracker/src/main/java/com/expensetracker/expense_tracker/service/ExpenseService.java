@@ -1,11 +1,16 @@
 package com.expensetracker.expense_tracker.service;
 
+import com.expensetracker.expense_tracker.dto.expense.ExpenseResponse;
 import com.expensetracker.expense_tracker.exception.ResourceNotFoundException;
+import com.expensetracker.expense_tracker.mapper.ExpenseMapper;
 import com.expensetracker.expense_tracker.model.Expense;
 import com.expensetracker.expense_tracker.repository.ExpenseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -17,6 +22,27 @@ public class ExpenseService {
 
     public List<Expense> getAllExpenses() {
         return expenseRepository.findAll();
+    }
+
+    public List<ExpenseResponse> getExpenses(String category, LocalDate from, LocalDate to) {
+        LocalDateTime start = from != null ? from.atStartOfDay() : null;
+        LocalDateTime end = to != null ? to.atTime(LocalTime.MAX) : null;
+
+        List<Expense> expenses;
+        if (category != null && start != null && end != null) {
+            expenses = expenseRepository.findByCategoryAndDateBetween(category, start, end);
+        } else if (start != null && end != null) {
+            expenses = expenseRepository.findByDateBetween(start, end);
+        } else if (category != null) {
+            expenses = expenseRepository.findByCategory(category);
+        } else {
+            expenses = expenseRepository.findAll();
+        }
+
+        if (expenses.isEmpty() && (category != null || start != null)) {
+            throw new ResourceNotFoundException("No expenses found for the given filters");
+        }
+        return expenses.stream().map(ExpenseMapper::toResponse).toList();
     }
 
     public void addExpense(Expense expense){

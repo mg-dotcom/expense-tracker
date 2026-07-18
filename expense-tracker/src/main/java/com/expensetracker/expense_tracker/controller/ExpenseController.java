@@ -11,9 +11,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -26,16 +28,10 @@ public class ExpenseController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<ExpenseResponse>>> getAllExpenses(
-            @RequestParam(required = false) String category) {
-        List<Expense> expenses = (category != null)
-                ? expenseService.getExpensesByCategory(category)
-                : expenseService.getAllExpenses();
-
-        List<ExpenseResponse> response = expenses.stream()
-                .map(ExpenseMapper::toResponse)
-                .toList();
-
-        return ResponseEntity.ok(ApiResponse.ok(response));
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+        return ResponseEntity.ok(ApiResponse.ok(expenseService.getExpenses(category, from, to)));
     }
 
     @PostMapping
