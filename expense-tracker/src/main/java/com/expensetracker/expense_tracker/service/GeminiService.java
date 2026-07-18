@@ -8,14 +8,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class GeminiService {
 
     private final String apiKey;
+    private final String model;
     private final WebClient webClient;
-    //    ตัวส่ง HTTP request ออกไปหา Gemini API เหมือนที่ Postman ทำ แต่ทำใน code แทน
+    // Sends HTTP requests to the Gemini API
 
     public record GeminiRequest(List<Content> contents) {}
     public record Content(List<Part> parts) {}
@@ -25,39 +25,36 @@ public class GeminiService {
     public record ContentResponse(List<PartResponse> parts) {}
     public record PartResponse(String text) {}
 
-    // ต้องกำหนดค่าให้ครบทุกตัวที่เป็น final ในนี้
     public GeminiService(
             @Value("${gemini.api.key}") String apiKey,
+            @Value("${gemini.api.model}") String model,
             WebClient.Builder webClientBuilder
     ) {
         this.apiKey = apiKey;
-        // สร้าง webClient จาก builder ที่ Spring ส่งมาให้
+        this.model = model;
         this.webClient = webClientBuilder
                 .baseUrl("https://generativelanguage.googleapis.com")
                 .build();
     }
 
     public String analyzeExpenses(List<Expense> expenses){
-        // สร้าง prompt ให้ Gemini
-        String prompt = "วิเคราะห์รายจ่ายต่อไปนี้เป็นภาษาไทย และให้คำแนะนำ: "
+        String prompt = "Analyze the following expenses in Thai and give recommendations: "
                 + expenses.toString();
 
-        // สร้าง Object ตามโครงสร้าง
         GeminiRequest requestBody = new GeminiRequest(List.of(new Content(List.of(new Part(prompt)))));
 
         return webClient.post()
-                .uri("/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey)
+                .uri("/v1beta/models/" + model + ":generateContent?key=" + apiKey)
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(requestBody)
                 .retrieve()
                 .bodyToMono(GeminiResponse.class).map(response -> {
-                    // เรียกผ่าน Method สวยๆ ได้เลย ไม่ต้อง Cast!
                     try {
                         return response.candidates().get(0)
                                 .content().parts().get(0)
                                 .text();
                     } catch (Exception e) {
-                        return "วิเคราะห์ไม่สำเร็จ หรือรูปแบบข้อมูลไม่ถูกต้อง";
+                        return "Analysis failed, or the response format was invalid";
                     }
                 })
                 .block();
