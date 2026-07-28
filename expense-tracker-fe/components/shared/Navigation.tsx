@@ -30,6 +30,14 @@ export default function Navigation() {
                     <Link href="/dashboard" className="font-semibold text-[var(--color-ink)]">
                         Expense Tracker
                     </Link>
+                    {isAuth && (
+                        <Link
+                            href="/dashboard/summary"
+                            className="text-sm text-[var(--color-ink)]/60 hover:text-[var(--color-ink)] transition-colors"
+                        >
+                            Summary
+                        </Link>
+                    )}
                 </div>
 
                 {isAuth && (
