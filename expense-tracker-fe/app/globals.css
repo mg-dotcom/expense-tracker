@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #F7F7F4;
+  --color-ink: #12213D;
+  --color-line: #DFE0DA;
+  --color-forest: #2F5233;
+  --color-forest-light: #E7EEE3;
+  --color-rust: #C1502E;
+  --color-rust-light: #FBEAE3;
+}
+
+@theme inline {
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-display: var(--font-display);
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
