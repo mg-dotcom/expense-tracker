@@ -38,16 +38,17 @@ public class ExpenseService {
     public List<ExpenseResponse> getExpenses(String category, LocalDate from, LocalDate to) {
         LocalDateTime start = from != null ? from.atStartOfDay() : null;
         LocalDateTime end = to != null ? to.atTime(LocalTime.MAX) : null;
+        User currentUser = getCurrentUser();
 
         List<Expense> expenses;
         if (category != null && start != null && end != null) {
-            expenses = expenseRepository.findByCategoryAndDateBetween(category, start, end);
+            expenses = expenseRepository.findByUserAndCategoryAndDateBetween(currentUser, category, start, end);
         } else if (start != null && end != null) {
-            expenses = expenseRepository.findByDateBetween(start, end);
+            expenses = expenseRepository.findByUserAndDateBetween(currentUser, start, end);
         } else if (category != null) {
-            expenses = expenseRepository.findByCategory(category);
+            expenses = expenseRepository.findByUserAndCategory(currentUser, category);
         } else {
-            expenses = expenseRepository.findAll();
+            expenses = expenseRepository.findByUser(currentUser);
         }
 
         if (expenses.isEmpty() && (category != null || start != null)) {
@@ -122,7 +123,7 @@ public class ExpenseService {
 
     public void exportToCsv(PrintWriter writer) {
         writer.println("id,name,category,cost,date");
-        expenseRepository.findAll().forEach(e ->
+        expenseRepository.findByUser(getCurrentUser()).forEach(e ->
                 writer.println(String.join(",",
                         String.valueOf(e.getId()),
                         escapeCsv(e.getName()),

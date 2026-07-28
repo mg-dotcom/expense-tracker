@@ -8,11 +8,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ExpenseRepository extends JpaRepository<Expense,Long> {
-    List<Expense> findByCategory(String category);
-    List<Expense> findByDateBetween(LocalDateTime start, LocalDateTime end);
-    List<Expense> findByCategoryAndDateBetween(String category, LocalDateTime start, LocalDateTime end);
     List<Expense> findByUser(User user);
     List<Expense> findByUserAndCategory(User user, String category);
+    List<Expense> findByUserAndDateBetween(User user, LocalDateTime start, LocalDateTime end);
+    List<Expense> findByUserAndCategoryAndDateBetween(User user, String category, LocalDateTime start, LocalDateTime end);
 }
 
 
