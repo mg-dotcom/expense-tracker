@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import type { Expense, ExpenseInput } from "@/lib/types";
+import type { Expense, ExpenseInput } from "@/types/types";
 
 interface Props {
     expense?: Expense;

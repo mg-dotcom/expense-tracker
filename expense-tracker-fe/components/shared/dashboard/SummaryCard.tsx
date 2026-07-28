@@ -1,5 +1,5 @@
 import SummaryCard from "./SummaryCard";
-import type { ExpenseSummary } from "@/lib/types";
+import type { ExpenseSummary } from "@/types/types";
 
 interface Props {
     summary: ExpenseSummary;

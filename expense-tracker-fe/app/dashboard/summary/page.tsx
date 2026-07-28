@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { api, ApiError } from "@/lib/api";
-import type { ExpenseSummary } from "@/lib/types";
+import type { ExpenseSummary } from "@/types/types";
 import PageWrapper from "@/components/shared/PageWrapper";
 
 export default function SummaryPage() {

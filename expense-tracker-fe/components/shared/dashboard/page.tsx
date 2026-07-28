@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { api, ApiError, downloadCsv } from "@/lib/api";
-import type { Expense, ExpenseInput, ExpenseSummary } from "@/lib/types";
+import type { Expense, ExpenseInput, ExpenseSummary } from "@/types/types";
 import PageWrapper from "@/components/shared/PageWrapper";
 import SummaryCards from "@/components/dashboard/SummaryCards";
 import ExpenseList from "@/components/dashboard/ExpenseList";
