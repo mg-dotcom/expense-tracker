@@ -1,5 +1,7 @@
 # Expense Tracker
-A personal expense tracking application with AI-powered spending analysis, built with Java Spring Boot and Next.js.
+A full-stack expense tracking application featuring AI-powered spending analysis and personalized budget recommendations, built with Java Spring Boot and Next.js.
+
+Track your daily expenses, visualize spending patterns by category, and get intelligent financial insights in Thai powered by Gemini 2.5 Flash Lite.
 
 ## Screenshots
 
