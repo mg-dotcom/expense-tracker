@@ -37,8 +37,25 @@ public class GeminiService {
     }
 
     public String analyzeExpenses(List<Expense> expenses){
-        String prompt = "Analyze the following expenses in Thai and give recommendations: "
-                + expenses.toString();
+        String prompt = """
+                วิเคราะห์รายจ่ายต่อไปนี้เป็นภาษาไทย:
+                
+                %s
+                
+                ตอบในรูปแบบนี้เท่านั้น ห้ามใช้ ** หรือ ### :
+                
+                สรุป: [รายจ่ายรวม และหมวดที่ใช้มากที่สุด]
+                
+                วิเคราะห์:
+                - [ข้อสังเกตที่ 1]
+                - [ข้อสังเกตที่ 2]
+                - [ข้อสังเกตที่ 3]
+                
+                คำแนะนำ:
+                - [คำแนะนำที่ 1]
+                - [คำแนะนำที่ 2]
+                - [คำแนะนำที่ 3]
+                """.formatted(expenses.toString());
 
         GeminiRequest requestBody = new GeminiRequest(List.of(new Content(List.of(new Part(prompt)))));
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import ReactMarkdown from "react-markdown";
 import { useRouter } from "next/navigation";
 import { getExpenses, getSummary, addExpense, updateExpense, deleteExpense, analyze } from "@/lib/expense-api";
 import { downloadCsv } from "@/lib/api";
@@ -107,11 +108,13 @@ export default function DashboardPage() {
                 {/* AI Analysis Result */}
                 {analysis && (
                     <div className="border border-[var(--color-forest)]/20 bg-[var(--color-forest-light)] rounded-xl p-4 text-sm text-[var(--color-ink)] animate-slide-down">
-                        <p className="font-medium mb-1 text-[var(--color-forest)]">AI Analysis</p>
-                        <p className="leading-relaxed">{analysis}</p>
+                        <p className="font-medium mb-2 text-[var(--color-forest)]">AI Analysis</p>
+                        <div className="prose prose-sm max-w-none leading-relaxed">
+                            <ReactMarkdown>{analysis}</ReactMarkdown>
+                        </div>
                     </div>
                 )}
-
+                
                 {/* Expense List */}
                 <ExpenseList
                     expenses={expenses}
