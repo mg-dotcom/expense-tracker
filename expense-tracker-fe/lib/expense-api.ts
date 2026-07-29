@@ -1,5 +1,5 @@
 import { api } from "./api";
-import type { Expense, ExpenseInput, ExpenseFilters, ExpenseSummary } from "../types/types";
+import type { Expense, ExpenseInput, ExpenseFilters, ExpenseSummary } from "./types/expense";
 
 interface ApiEnvelope<T> {
     data: T;

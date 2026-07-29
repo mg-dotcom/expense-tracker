@@ -1,33 +1,30 @@
-import SummaryCard from "./SummaryCard";
-import type { ExpenseSummary } from "@/types/types";
+import type { CardColor } from "@/lib/types/expense"
 
 interface Props {
-    summary: ExpenseSummary;
+    title: string;
+    value: string;
+    sub?: string;
+    color?: CardColor;
 }
 
-export default function SummaryCards({ summary }: Props) {
-    const { totalThisMonth, monthlyBudget, isOverBudget } = summary;
+export default function SummaryCard({ title, value, sub, color = "ink" }: Props) {
+    const colors = {
+        forest: "border-[var(--color-forest)]/20 bg-[var(--color-forest-light)]",
+        rust: "border-[var(--color-rust)]/20 bg-[var(--color-rust-light)]",
+        ink: "border-[var(--color-line)] bg-white",
+    };
 
-    const budgetLeft = monthlyBudget != null ? monthlyBudget - totalThisMonth : null;
+    const textColors = {
+        forest: "text-[var(--color-forest)]",
+        rust: "text-[var(--color-rust)]",
+        ink: "text-[var(--color-ink)]",
+    };
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 animate-slide-down">
-            <SummaryCard
-                title="This Month"
-                value={`฿${totalThisMonth.toLocaleString()}`}
-                color="ink"
-            />
-            <SummaryCard
-                title="Budget"
-                value={monthlyBudget != null ? `฿${monthlyBudget.toLocaleString()}` : "—"}
-                color="forest"
-            />
-            <SummaryCard
-                title="Remaining"
-                value={budgetLeft != null ? `฿${Math.abs(budgetLeft).toLocaleString()}` : "—"}
-                sub={isOverBudget ? "Over budget" : undefined}
-                color={isOverBudget ? "rust" : "forest"}
-            />
+        <div className={`border rounded-xl p-5 transition-all duration-300 hover:scale-105 ${colors[color]}`}>
+            <p className="text-sm text-[var(--color-ink)]/60">{title}</p>
+            <p className={`text-3xl font-bold mt-2 tabular ${textColors[color]}`}>{value}</p>
+            {sub && <p className="text-xs text-[var(--color-rust)] mt-1">{sub}</p>}
         </div>
     );
 }

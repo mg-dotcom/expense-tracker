@@ -1,6 +1,6 @@
 "use client";
 
-import type { Expense } from "@/types/types";
+import type { Expense } from "@/lib/types/expense";
 
 interface Props {
     expenses: Expense[];

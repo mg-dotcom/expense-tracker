@@ -2,12 +2,13 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { api, ApiError, downloadCsv } from "@/lib/api";
-import type { Expense, ExpenseInput, ExpenseSummary } from "@/types/types";
+import { getExpenses, getSummary, addExpense, updateExpense, deleteExpense, analyze } from "@/lib/expense-api";
+import { downloadCsv } from "@/lib/api";
+import type { Expense, ExpenseInput, ExpenseSummary } from "@/lib/types/expense";
 import PageWrapper from "@/components/shared/PageWrapper";
-import SummaryCards from "@/components/dashboard/SummaryCards";
-import ExpenseList from "@/components/dashboard/ExpenseList";
-import ExpenseFormModal from "@/components/dashboard/ExpenseFormModal";
+import SummaryCards from "@/components/shared/dashboard/SummaryCards";
+import ExpenseList from "@/components/shared/dashboard/ExpenseList";
+import ExpenseFormModal from "@/components/shared/dashboard/ExpenseFormModal";
 
 export default function DashboardPage() {
     const router = useRouter();
@@ -20,11 +21,11 @@ export default function DashboardPage() {
 
     const load = useCallback(async () => {
         try {
-            const [exp, sum] = await Promise.all([api.getExpenses(), api.getSummary()]);
+            const [exp, sum] = await Promise.all([getExpenses(), getSummary()]);
             setExpenses(exp);
             setSummary(sum);
-        } catch (err) {
-            if (err instanceof ApiError) router.push("/login");
+        } catch {
+            router.push("/login");
         } finally {
             setLoading(false);
         }
@@ -34,16 +35,16 @@ export default function DashboardPage() {
 
     async function handleSave(data: ExpenseInput) {
         if (modal.expense) {
-            await api.updateExpense(modal.expense.id, data);
+            await updateExpense(modal.expense.id, data);
         } else {
-            await api.addExpense(data);
+            await addExpense(data);
         }
         await load();
     }
 
     async function handleDelete(id: number) {
         if (!confirm("Delete this expense?")) return;
-        await api.deleteExpense(id);
+        await deleteExpense(id);
         await load();
     }
 
@@ -51,7 +52,7 @@ export default function DashboardPage() {
         setAnalyzing(true);
         setAnalysis("");
         try {
-            const result = await api.analyze();
+            const result = await analyze();
             setAnalysis(result);
         } catch {
             setAnalysis("Failed to analyze. Please try again.");

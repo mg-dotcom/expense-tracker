@@ -24,3 +24,5 @@ export interface ExpenseFilters {
   from?: string;
   to?: string;
 }
+
+export type CardColor = "forest" | "rust" | "ink";
