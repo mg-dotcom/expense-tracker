@@ -28,6 +28,7 @@ Track your daily expenses, visualize spending patterns by category, and get inte
 - **Category Breakdown** — horizontal bar chart showing spending by category
 - **Export CSV** — download all expenses as a CSV file
 - **JWT Authentication** — secure login with Spring Security
+- **Unit Tested** — service layer covered with JUnit 5 and Mockito, including ownership validation and budget overflow detection
 
 ---
 
@@ -40,6 +41,7 @@ Track your daily expenses, visualize spending patterns by category, and get inte
 | Database | PostgreSQL 17 |
 | Cache | Caffeine (in-memory) |
 | AI | Gemini 3.1 Flash Lite API |
+| Testing | JUnit 5, Mockito |
 | Build | Maven |
 
 ---
